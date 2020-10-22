@@ -9,10 +9,17 @@ Uses Dog API: https://dog.ceo/dog-api/
 
 ### Screenshots:
 Android App [Portrait]:<br>
-![](Screenshots/android_portrait.jpg "Android App [Portrait]")<br><br>
+<img src="Screenshots/android_portrait.jpg" alt="Android App [Portrait]" width="150"/>
+<br>
+
 Android App [Landscape]:<br>
-![](Screenshots/android_landscape.jpg "Android App [Portrait]")<br><br>
+<img src="Screenshots/android_landscape.jpg" alt="Android App [Landscape]" height="200"/>
+<br>
+
 Web App [Chrome, Portrait]:<br>
-![](Screenshots/web_app_portrait.jpg "Web App [Chrome] [Portrait]")<br><br>
+<img src="Screenshots/web_app_portrait.jpg" alt="Web App [Chrome] [Portrait]" width="250"/>
+<br>
+
 Web App [Chrome, Landscape]:<br>
-![](Screenshots/web_app_landscape.png "Web App [Chrome] [Landscape]")<br><br>
+<img src="Screenshots/web_app_landscape.png" alt="Web App [Chrome] [Landscape]" height="350"/>
+<br><br>
