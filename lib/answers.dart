@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:animated_button/animated_button.dart';
+
 class Answers extends StatelessWidget {
   final Function(int) _answerQuestion;
   Answers(this._answerQuestion);
@@ -8,7 +8,7 @@ class Answers extends StatelessWidget {
   Widget build(BuildContext context) {
     final double _width = MediaQuery.of(context).size.width;
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 40),
+      padding: EdgeInsets.symmetric(vertical: 30),
       color: Colors.black,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

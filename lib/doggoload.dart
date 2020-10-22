@@ -25,45 +25,42 @@ class ImageLoad extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return (_genNew) ?
-    FutureBuilder<String>(
-      future: fetchImg(),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          _currImage = snapshot.data;
-          return Image.network(
-              _currImage,
-              loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
-                if (loadingProgress == null)
-                  return child;
-                return CircularProgressIndicator(
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
-                          : null,
-                );
+    return (_genNew)
+        ? FutureBuilder<String>(
+            future: fetchImg(),
+            builder: (context, snapshot) {
+              if (snapshot.hasData) {
+                _currImage = snapshot.data;
+                return Image.network(_currImage, loadingBuilder:
+                    (BuildContext context, Widget child,
+                        ImageChunkEvent loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return CircularProgressIndicator(
+                    value: loadingProgress.expectedTotalBytes != null
+                        ? loadingProgress.cumulativeBytesLoaded /
+                            loadingProgress.expectedTotalBytes
+                        : null,
+                  );
+                });
+              } else if (snapshot.hasError) {
+                return Text("${snapshot.error}");
               }
-          );
-        } else if (snapshot.hasError) {
-          return Text("${snapshot.error}");
-        }
-        // By default, show a loading spinner.
-        return CircularProgressIndicator(backgroundColor: Colors.black,);
-      },
-    )
-    :
-    Image.network(
-        _currImage,
-        loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent loadingProgress) {
-          if (loadingProgress == null)
-            return child;
-          return Center(
-              child: CircularProgressIndicator(
-                value: loadingProgress.expectedTotalBytes != null
-                    ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes
-                    : null,
-              )
-          );
-        }
-    );
+              // By default, show a loading spinner.
+              return CircularProgressIndicator(
+                backgroundColor: Colors.black,
+              );
+            },
+          )
+        : Image.network(_currImage, loadingBuilder: (BuildContext context,
+            Widget child, ImageChunkEvent loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Center(
+                child: CircularProgressIndicator(
+              value: loadingProgress.expectedTotalBytes != null
+                  ? loadingProgress.cumulativeBytesLoaded /
+                      loadingProgress.expectedTotalBytes
+                  : null,
+            ));
+          });
   }
 }
