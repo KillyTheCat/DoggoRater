@@ -81,7 +81,7 @@ class _MyAppState extends State<MyApp> {
           '\nYOU HAVE BEEN RIGHTLY RESTRICTED \nFROM USING THIS APP. \n\nPLEASE DO NOT CONTACT THE DEVELOPER.',
           textAlign: TextAlign.center,
           textScaleFactor: 1.7,
-          style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold),
+          style: TextStyle(color: Colors.red[900], fontWeight: FontWeight.bold),
         );
         _scores[_qid]--;
         _qid = 2;
@@ -165,7 +165,7 @@ class _MyAppState extends State<MyApp> {
                 _bodyBgColor = CupertinoColors.white;
                 _questionTextColor = Colors.black;
                 _buttonsBgColor = Colors.white60;
-                _lowBodyColor = Colors.amber;
+                _lowBodyColor = Colors.amber[900];
               }
             });
           },

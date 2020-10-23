@@ -42,14 +42,14 @@ List<Widget> bodyItems(
     if (!(_doggo is Text))
       (o == 'p')
           ? Container(
-              width: double.infinity, color: lowerBodyColor, child: Answers(_answerQuestion, buttonBackgroundColor))
+              width: double.infinity, color: lowerBodyColor, child: Answers(_answerQuestion, lowerBodyColor))
           : Flexible(
               flex: 2,
               child: Container(
                   height: double.infinity,
                   width: double.infinity,
                   color: lowerBodyColor,
-                  child: Answers(_answerQuestion, buttonBackgroundColor))),
+                  child: Answers(_answerQuestion, lowerBodyColor))),
     if (_doggo is Text)
       Flexible(
         flex: 1,
