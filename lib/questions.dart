@@ -12,7 +12,7 @@ class Questions extends StatefulWidget {
 class _QuestionsState extends State<Questions> {
   @override
   Widget build(BuildContext context) {
-    return (Text(
+    return Text(
       widget._questionText,
       style: TextStyle(
         color: widget._questionColor,
@@ -21,6 +21,6 @@ class _QuestionsState extends State<Questions> {
         fontWeight: FontWeight.bold,
       ),
       textAlign: TextAlign.center,
-    ));
+    );
   }
 }

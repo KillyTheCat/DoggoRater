@@ -15,14 +15,15 @@ class StatAppBar extends StatelessWidget {
           style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 15,
-              color: Colors.green[50]),
+              color: Colors.green[900],
+          ),
         ),
         Text(
           "Indecisiveness: ${_scores[1]}",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 15,
-            color: Colors.grey[900],
+            color: Colors.white,
           ),
         ),
         Text(

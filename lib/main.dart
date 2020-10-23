@@ -41,22 +41,22 @@ class _MyAppState extends State<MyApp> {
   Orientation _orient;
   FileHandler _file;
   var _lOrient = Orientation.portrait;
-  Widget _doggo = ImageLoad(true);
-  bool isDarkMode = true;
-  Color bodyBgColor = CupertinoColors.darkBackgroundGray;
-  Color questionTextColor = Colors.white;
-  Color buttonsBgColor = Colors.black;
+  Widget _doggo;
+  bool _isDarkMode;
+  Color _bodyBgColor = CupertinoColors.darkBackgroundGray, _lowBodyColor = Colors.black;
+  Color _questionTextColor = Colors.white;
+  Color _buttonsBgColor = Colors.black54;
 
   _MyAppState(_f) {
     _file = _f;
     _scores = [0, 0, 0];
-    if (!kIsWeb) _file.readContent().then((value) => _scoreReader(value));
+    _isDarkMode = true;
+    _doggo = ImageLoad(true);
 
     if (_file.permissionGiven() && !kIsWeb && !_file.exists())
       _file.writeContent('0\n0\n0');
 
-    if (!kIsWeb)
-      _file.readContent().then((value) => _scoreReader(value));
+    if (!kIsWeb) _file.readContent().then((value) => _scoreReader(value));
   }
 
   void _scoreReader(String S) {
@@ -68,14 +68,20 @@ class _MyAppState extends State<MyApp> {
     setState(() {
       // Rebuilds MyAppState
       _qid = responseType;
+
+      if (responseType == 99) {
+        _scores = [0, 0, 0];
+        _qid = 0;
+        _scores[_qid] = -1;
+      }
       _scores[_qid]++;
 
       if (_scores[2] >= 10) {
         _doggo = Text(
           '\nYOU HAVE BEEN RIGHTLY RESTRICTED \nFROM USING THIS APP. \n\nPLEASE DO NOT CONTACT THE DEVELOPER.',
           textAlign: TextAlign.center,
-          textScaleFactor: 2,
-          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+          textScaleFactor: 1.7,
+          style: TextStyle(color: Colors.amber, fontWeight: FontWeight.bold),
         );
         _scores[_qid]--;
         _qid = 2;
@@ -111,9 +117,8 @@ class _MyAppState extends State<MyApp> {
             width: _width,
             child: StatAppBar(_scores),
           ),
-          backgroundColor: Colors.amber,
+          backgroundColor: _lowBodyColor,
         ),
-        backgroundColor: CupertinoColors.darkBackgroundGray,
         body: (_orient == Orientation.portrait)
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -125,9 +130,11 @@ class _MyAppState extends State<MyApp> {
                     _height,
                     _width,
                     'p',
-                    bodyBgColor,
-                    questionTextColor,
-                    buttonsBgColor),
+                    _bodyBgColor,
+                    _questionTextColor,
+                    _buttonsBgColor,
+                    _lowBodyColor,
+                ),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -139,22 +146,26 @@ class _MyAppState extends State<MyApp> {
                     _height,
                     _width,
                     'l',
-                    bodyBgColor,
-                    questionTextColor,
-                    buttonsBgColor),
+                    _bodyBgColor,
+                    _questionTextColor,
+                    _buttonsBgColor,
+                    _lowBodyColor,
+                ),
               ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             setState(() {
-              isDarkMode = !isDarkMode;
-              if (isDarkMode) {
-                bodyBgColor = CupertinoColors.darkBackgroundGray;
-                questionTextColor = Colors.white;
-                buttonsBgColor = Colors.black;
+              _isDarkMode = !_isDarkMode;
+              if (_isDarkMode) {
+                _bodyBgColor = CupertinoColors.darkBackgroundGray;
+                _questionTextColor = Colors.white;
+                _buttonsBgColor = Colors.black54;
+                _lowBodyColor = Colors.black;
               } else {
-                bodyBgColor = CupertinoColors.white;
-                questionTextColor = Colors.black;
-                buttonsBgColor = Colors.grey;
+                _bodyBgColor = CupertinoColors.white;
+                _questionTextColor = Colors.black;
+                _buttonsBgColor = Colors.white60;
+                _lowBodyColor = Colors.amber;
               }
             });
           },

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:doggo_rater/questions.dart';
 import 'package:doggo_rater/answers.dart';
-import 'main.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 List<Widget> bodyItems(
   String question,
@@ -13,15 +13,16 @@ List<Widget> bodyItems(
   double _height,
   double _width,
   String o,
-  Color bgcolor,
+  Color bodyBackgroundColor,
   Color questionTextColor,
-  Color bgcolor2,
+  Color buttonBackgroundColor,
+  Color lowerBodyColor
 ) {
   return [
     Flexible(
-      flex: 1,
+      flex: 2,
       child: Container(
-        color: bgcolor,
+        color: bodyBackgroundColor,
         width: double.infinity,
         child: Column(children: <Widget>[
           Container(
@@ -41,12 +42,32 @@ List<Widget> bodyItems(
     if (!(_doggo is Text))
       (o == 'p')
           ? Container(
-              width: double.infinity, child: Answers(_answerQuestion, bgcolor2))
+              width: double.infinity, color: lowerBodyColor, child: Answers(_answerQuestion, buttonBackgroundColor))
           : Flexible(
-              flex: 1,
+              flex: 2,
               child: Container(
                   height: double.infinity,
                   width: double.infinity,
-                  child: Answers(_answerQuestion, bgcolor2))),
+                  color: lowerBodyColor,
+                  child: Answers(_answerQuestion, buttonBackgroundColor))),
+    if (_doggo is Text)
+      Flexible(
+        flex: 1,
+        child: Container(
+          padding: EdgeInsets.symmetric(horizontal: 15),
+          alignment: Alignment.center,
+          color: lowerBodyColor,
+          child: RaisedButton(
+            padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
+            child: Text(
+                'I have made a severe and continuous lapse in my Judgement. Please reset.',
+                style: GoogleFonts.bubblegumSans(fontSize: 20, color: questionTextColor),
+                textAlign: TextAlign.center,
+              ),
+            onPressed: () => _answerQuestion(99),
+            color: buttonBackgroundColor,
+          ),
+        ),
+      )
   ];
 }

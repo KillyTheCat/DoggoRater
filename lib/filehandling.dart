@@ -1,7 +1,7 @@
 import 'dart:io';
-import 'package:http/http.dart';
+
 import 'package:path_provider/path_provider.dart';
-import 'package:simple_permissions/simple_permissions.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 
 class FileHandler {
@@ -18,8 +18,8 @@ class FileHandler {
   }
 
   Future<bool> getPermission() async {
-    PermissionStatus permissionResult = await SimplePermissions.requestPermission(Permission. WriteExternalStorage);
-    if (permissionResult == PermissionStatus.authorized){
+    PermissionStatus permissionResult = await Permission.storage.request();
+    if (permissionResult == PermissionStatus.granted){
       // code of read or write file in external storage (SD card)
       return true;
     }
@@ -27,6 +27,7 @@ class FileHandler {
   }
 
   FileHandler(String name) {
+    _permitted = false;
     getPermission().then((value) => _permitted = value);
     this._filename = name;
     this._file = _localFile(_filename);
@@ -50,7 +51,6 @@ class FileHandler {
     final File thisFile = await _file;
     if (!_permitted)
       _permitted = await getPermission();
-
     return thisFile.writeAsString(S);
   }
 
