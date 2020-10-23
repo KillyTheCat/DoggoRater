@@ -9,10 +9,6 @@ class FileHandler {
   String _filename;
   bool _permitted, _prExisting;
 
-  bool exists() {
-    return _prExisting;
-  }
-
   bool permissionGiven() {
     return _permitted;
   }
@@ -26,11 +22,11 @@ class FileHandler {
     else return false;
   }
 
-  FileHandler(String name) {
+  FileHandler(String name, String initialString) {
     _permitted = false;
     getPermission().then((value) => _permitted = value);
     this._filename = name;
-    this._file = _localFile(_filename);
+    this._file = _localFile(_filename, initial: initialString);
     this._prExisting = false;
   }
 
@@ -39,10 +35,17 @@ class FileHandler {
     return directory.path;
   }
 
-  Future<File> _localFile(String name) async {
+  Future<File> _localFile(String name, {String initial = ''}) async {
     final String path = await _localPath;
     final File thisFile = File('$path/$name');
+
+    if (!_permitted)
+      _permitted = await getPermission();
+
     _prExisting = await thisFile.exists();
+    if (!_prExisting)
+      thisFile.writeAsString(initial);
+
     return thisFile;
   }
 

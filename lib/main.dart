@@ -23,8 +23,7 @@ class AppHome extends StatelessWidget {
 class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    FileHandler fileObj = FileHandler('scores.txt');
-    if (!kIsWeb && !fileObj.exists()) fileObj.writeContent('0\n0\n0');
+    FileHandler fileObj = FileHandler('scores.txt', '0\n0\n0');
     return _MyAppState(fileObj);
   }
 }
@@ -43,20 +42,18 @@ class _MyAppState extends State<MyApp> {
   var _lOrient = Orientation.portrait;
   Widget _doggo;
   bool _isDarkMode;
-  Color _bodyBgColor = CupertinoColors.darkBackgroundGray,
-      _lowBodyColor = Colors.black;
-  Color _questionTextColor = Colors.white;
-  Color _buttonsBgColor = Colors.black54;
+  Color _bodyBgColor, _lowBodyColor, _questionTextColor, _buttonsBgColor;
 
   _MyAppState(_f) {
     _file = _f;
     _scores = [0, 0, 0];
-    _isDarkMode = true;
+    _isDarkMode = false;
     _doggo = ImageLoad(true);
 
-    if (_file.permissionGiven() && !kIsWeb && !_file.exists())
-      _file.writeContent('0\n0\n0');
-
+    _bodyBgColor = CupertinoColors.white;
+    _questionTextColor = Colors.black;
+    _buttonsBgColor = Colors.white60;
+    _lowBodyColor = Colors.amber[300];
     if (!kIsWeb) _file.readContent().then((value) => _scoreReader(value));
   }
 
