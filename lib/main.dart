@@ -40,15 +40,14 @@ class _MyAppState extends State<MyApp> {
   Orientation _orient;
   FileHandler _file;
   var _lOrient = Orientation.portrait;
-  Widget _doggo;
-  bool _isDarkMode;
+  Widget _doggo = Text('');
+  bool _isDarkMode, _reloadImg;
   Color _bodyBgColor, _lowBodyColor, _questionTextColor, _buttonsBgColor;
 
   _MyAppState(_f) {
     _file = _f;
     _scores = [0, 0, 0];
     _isDarkMode = false;
-    _doggo = ImageLoad(true);
 
     // Colors changing between Dark and Light mode
     _bodyBgColor = CupertinoColors.white;
@@ -58,12 +57,13 @@ class _MyAppState extends State<MyApp> {
 
     // Enable file handling if not in Web app mode
     if (!kIsWeb) _file.readContent().then((value) => _scoreReader(value));
+    _reloadImg = true;
   }
 
   void _scoreReader(String S) {
     int i = 0;
     for (String score in S.split('\n')) _scores[i++] = int.parse(score);
-    setState(() {});
+    setState(() => _reloadImg = true);
   }
 
   void _answerQuestion(int responseType) {
@@ -75,28 +75,14 @@ class _MyAppState extends State<MyApp> {
       if (responseType == 99) {
         _scores = [0, 0, 0];
         _qid = 0;
-        _scores[_qid] = -1;
-      }
-      _scores[_qid]++;
-
-      // Change widget based on score
-      if (_scores[2] >= 10) {
-        _doggo = Text(
-          '\nYOU HAVE BEEN RIGHTLY RESTRICTED \nFROM USING THIS APP. \n\nPLEASE DO NOT CONTACT THE DEVELOPER.',
-          textAlign: TextAlign.center,
-          textScaleFactor: 1.7,
-          style: TextStyle(color: Colors.red[900], fontWeight: FontWeight.bold),
-        );
-        _scores[_qid]--;
-        _qid = 2;
-        _scores[_qid] = 10;
-      }
-      else _doggo = ImageLoad(true);
+      } else
+        _scores[_qid]++;
 
       // Save score to file
       if (!kIsWeb)
         _file.writeContent('${_scores[0]}\n${_scores[1]}\n${_scores[2]}');
     });
+    _reloadImg = true;
   }
 
   @override
@@ -113,7 +99,10 @@ class _MyAppState extends State<MyApp> {
     _lOrient = _orient;
     _orient = MediaQuery.of(context).orientation;
 
-    if (_lOrient != _orient && !(_doggo is Text)) _doggo = ImageLoad(false);
+    if (_lOrient != _orient || !_reloadImg)
+      _doggo = ImageLoad(false, _scores[2]);
+    else
+      _doggo = ImageLoad(true, _scores[2]);
 
     return MaterialApp(
       home: Scaffold(
@@ -129,11 +118,10 @@ class _MyAppState extends State<MyApp> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: bodyItems(
                   _questions[_qid + 1],
-                  _scores,
+                  _scores[2],
                   _answerQuestion,
                   _doggo,
                   _height,
-                  _width,
                   'p',
                   _bodyBgColor,
                   _questionTextColor,
@@ -145,11 +133,10 @@ class _MyAppState extends State<MyApp> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: bodyItems(
                   _questions[_qid + 1],
-                  _scores,
+                  _scores[2],
                   _answerQuestion,
                   _doggo,
                   _height,
-                  _width,
                   'l',
                   _bodyBgColor,
                   _questionTextColor,
@@ -172,6 +159,7 @@ class _MyAppState extends State<MyApp> {
                 _buttonsBgColor = Colors.white60;
                 _lowBodyColor = Colors.amber[300];
               }
+              _reloadImg = false;
             });
           },
           child: Icon(

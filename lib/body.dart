@@ -7,11 +7,10 @@ import 'package:google_fonts/google_fonts.dart';
 
 List<Widget> bodyItems(
     String question,
-    List<int> _scores,
+    int _score,
     Function(int) _answerQuestion,
     Widget _doggo,
     double _height,
-    double _width,
     String o,
     Color bodyBackgroundColor,
     Color questionTextColor,
@@ -38,7 +37,7 @@ List<Widget> bodyItems(
         ]),
       ),
     ),
-    if (!(_doggo is Text))
+    if (_score < 10)
       (o == 'p')
           ? Container(
               width: double.infinity,
@@ -51,7 +50,7 @@ List<Widget> bodyItems(
                   width: double.infinity,
                   color: lowerBodyColor,
                   child: Answers(_answerQuestion, lowerBodyColor))),
-    if (_doggo is Text)
+    if (_score >= 10)
       Flexible(
         flex: 1,
         child: Container(
