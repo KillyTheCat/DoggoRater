@@ -6,7 +6,7 @@ class FileHandler {
   String _filename;
   bool _prExisting;
 
-  bool exists(){
+  bool exists() {
     return _prExisting;
   }
 

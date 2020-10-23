@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class StatAppBar extends StatelessWidget {
   final List<int> _scores;
@@ -12,15 +13,16 @@ class StatAppBar extends StatelessWidget {
         Text(
           "Positive Ratings: ${_scores[0]}",
           style: TextStyle(
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-          ),
+              fontWeight: FontWeight.bold,
+              fontSize: 15,
+              color: Colors.green[50]),
         ),
         Text(
           "Indecisiveness: ${_scores[1]}",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 15,
+            color: Colors.grey[900],
           ),
         ),
         Text(
@@ -28,6 +30,7 @@ class StatAppBar extends StatelessWidget {
           style: TextStyle(
             fontWeight: FontWeight.bold,
             fontSize: 15,
+            color: Colors.red,
           ),
         ),
       ],

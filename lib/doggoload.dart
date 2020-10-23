@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'main.dart';
 
 Future<String> fetchImg() async {
   final response = await http.get('https://dog.ceo/api/breeds/image/random');
