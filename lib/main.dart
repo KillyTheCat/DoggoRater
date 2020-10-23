@@ -24,7 +24,6 @@ class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     FileHandler fileObj = FileHandler('scores.txt');
-
     if (!kIsWeb && !fileObj.exists()) fileObj.writeContent('0\n0\n0');
     return _MyAppState(fileObj);
   }
@@ -52,6 +51,12 @@ class _MyAppState extends State<MyApp> {
     _file = _f;
     _scores = [0, 0, 0];
     if (!kIsWeb) _file.readContent().then((value) => _scoreReader(value));
+
+    if (_file.permissionGiven() && !kIsWeb && !_file.exists())
+      _file.writeContent('0\n0\n0');
+
+    if (!kIsWeb)
+      _file.readContent().then((value) => _scoreReader(value));
   }
 
   void _scoreReader(String S) {
