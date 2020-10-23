@@ -23,7 +23,7 @@ class AppHome extends StatelessWidget {
 class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    FileHandler fileObj = FileHandler('scores.txt', '0\n0\n0');
+    FileHandler fileObj = FileHandler('scores.txt', '0\n0\n0\n0');
     return _MyAppState(fileObj);
   }
 }
@@ -62,7 +62,11 @@ class _MyAppState extends State<MyApp> {
 
   void _scoreReader(String S) {
     int i = 0;
-    for (String score in S.split('\n')) _scores[i++] = int.parse(score);
+    for (String score in S.split('\n')) {
+      if (i > 2)
+        _isDarkMode = int.parse(score) == 1;
+      else _scores[i++] = int.parse(score);
+    }
     setState(() => _reloadImg = true);
   }
 
@@ -77,12 +81,22 @@ class _MyAppState extends State<MyApp> {
         _qid = 0;
       } else
         _scores[_qid]++;
-
-      // Save score to file
-      if (!kIsWeb)
-        _file.writeContent('${_scores[0]}\n${_scores[1]}\n${_scores[2]}');
     });
     _reloadImg = true;
+  }
+
+  void _darkLightSwitch() {
+    if (_isDarkMode) {
+      _bodyBgColor = CupertinoColors.darkBackgroundGray;
+      _questionTextColor = Colors.white;
+      _buttonsBgColor = Colors.black54;
+      _lowBodyColor = Colors.black;
+    } else {
+      _bodyBgColor = CupertinoColors.white;
+      _questionTextColor = Colors.black;
+      _buttonsBgColor = Colors.white60;
+      _lowBodyColor = Colors.amber[300];
+    }
   }
 
   @override
@@ -90,11 +104,21 @@ class _MyAppState extends State<MyApp> {
     var _height = MediaQuery.of(context).size.height;
     var _width = MediaQuery.of(context).size.width;
 
+    // Build appearance based on Dark Mode Status
+    _darkLightSwitch();
+
     // Set up initial orientation
     if (!_started) {
       _started = true;
       _orient = MediaQuery.of(context).orientation;
     }
+    else {
+      // Save scores and Dark Mode Status to file separated by \n
+      int _darkModeStatus = (_isDarkMode) ? 1 : 0;
+      if (!kIsWeb)
+        _file.writeContent('${_scores[0]}\n${_scores[1]}\n${_scores[2]}\n$_darkModeStatus');
+    }
+
     // Track orientation changes in each build
     _lOrient = _orient;
     _orient = MediaQuery.of(context).orientation;
@@ -148,17 +172,6 @@ class _MyAppState extends State<MyApp> {
           onPressed: () {
             setState(() {
               _isDarkMode = !_isDarkMode;
-              if (_isDarkMode) {
-                _bodyBgColor = CupertinoColors.darkBackgroundGray;
-                _questionTextColor = Colors.white;
-                _buttonsBgColor = Colors.black54;
-                _lowBodyColor = Colors.black;
-              } else {
-                _bodyBgColor = CupertinoColors.white;
-                _questionTextColor = Colors.black;
-                _buttonsBgColor = Colors.white60;
-                _lowBodyColor = Colors.amber[300];
-              }
               _reloadImg = false;
             });
           },

@@ -54,6 +54,7 @@ class FileHandler {
     final File thisFile = await _file;
     if (!_permitted)
       _permitted = await getPermission();
+    print(S);
     return thisFile.writeAsString(S);
   }
 
