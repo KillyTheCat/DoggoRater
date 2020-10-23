@@ -166,7 +166,7 @@ class _MyAppState extends State<MyApp> {
                 _bodyBgColor = CupertinoColors.white;
                 _questionTextColor = Colors.black;
                 _buttonsBgColor = Colors.white60;
-                _lowBodyColor = Colors.amber[900];
+                _lowBodyColor = Colors.amber[300];
               }
             });
           },
