@@ -1,43 +1,57 @@
 import 'package:flutter/material.dart';
+import 'main.dart';
 
-class Answers extends StatelessWidget {
-  final Function(int) _answerQuestion;
-  Answers(this._answerQuestion);
+class Answers extends StatefulWidget {
+  Function(int) _answerQuestion;
+  Color bgColor;
+  Answers(this._answerQuestion, this.bgColor);
 
+  @override
+  _AnswersState createState() => _AnswersState();
+}
+
+class _AnswersState extends State<Answers> {
   @override
   Widget build(BuildContext context) {
     final double _width = MediaQuery.of(context).size.width;
     return Container(
       padding: EdgeInsets.symmetric(vertical: 30),
-      color: Colors.black,
+      color: widget.bgColor,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children:
-        [
-          ClipRRect(child: RaisedButton(child: Text('Good Boi'),
+        children: [
+          ClipRRect(
+            child: RaisedButton(
+              child: Text('Good Boi'),
               textColor: Colors.white,
               color: Colors.green,
-              onPressed: () => _answerQuestion(0),
-              padding: EdgeInsets.symmetric(horizontal: _width/5),
+              onPressed: () => widget._answerQuestion(0),
+              padding: EdgeInsets.symmetric(horizontal: _width / 5),
             ),
             borderRadius: BorderRadius.circular(15),
           ),
-         ClipRRect(child: RaisedButton(child: Text('I have crippling decision anxiety.',),
-              onPressed: () => _answerQuestion(1),
+          ClipRRect(
+            child: RaisedButton(
+              child: Text(
+                'I have crippling decision anxiety.',
+              ),
+              onPressed: () => widget._answerQuestion(1),
               color: Colors.white,
-              padding: EdgeInsets.symmetric(horizontal: _width/5 - 70),
+              padding: EdgeInsets.symmetric(horizontal: _width / 5 - 70),
             ),
-           borderRadius: BorderRadius.circular(15),
-         ),
-         ClipRRect(child: RaisedButton(child: Text('Heckin floofer'),
-              textColor: Colors.white,
-              color: Colors.red,
-              onPressed: () => _answerQuestion(2),
-              padding: EdgeInsets.symmetric(horizontal: _width/5 - 15)
-            ),
-           borderRadius: BorderRadius.circular(15),
-         ),
-        ],),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          ClipRRect(
+            child: RaisedButton(
+                child: Text('Heckin floofer'),
+                textColor: Colors.white,
+                color: Colors.red,
+                onPressed: () => widget._answerQuestion(2),
+                padding: EdgeInsets.symmetric(horizontal: _width / 5 - 15)),
+            borderRadius: BorderRadius.circular(15),
+          ),
+        ],
+      ),
     );
   }
 }

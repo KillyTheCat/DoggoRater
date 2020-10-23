@@ -24,6 +24,7 @@ class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     FileHandler fileObj = FileHandler('scores.txt');
+    if (!kIsWeb && !fileObj.exists()) fileObj.writeContent('0\n0\n0');
     return _MyAppState(fileObj);
   }
 }
@@ -41,10 +42,15 @@ class _MyAppState extends State<MyApp> {
   FileHandler _file;
   var _lOrient = Orientation.portrait;
   Widget _doggo = ImageLoad(true);
+  bool isDarkMode = true;
+  Color bodyBgColor = CupertinoColors.darkBackgroundGray;
+  Color questionTextColor = Colors.white;
+  Color buttonsBgColor = Colors.black;
 
   _MyAppState(_f) {
     _file = _f;
     _scores = [0, 0, 0];
+    if (!kIsWeb) _file.readContent().then((value) => _scoreReader(value));
 
     if (_file.permissionGiven() && !kIsWeb && !_file.exists())
       _file.writeContent('0\n0\n0');
@@ -55,8 +61,7 @@ class _MyAppState extends State<MyApp> {
 
   void _scoreReader(String S) {
     int i = 0;
-    for (String score in S.split('\n'))
-      _scores[i++] = int.parse(score);
+    for (String score in S.split('\n')) _scores[i++] = int.parse(score);
   }
 
   void _answerQuestion(int responseType) {
@@ -65,7 +70,7 @@ class _MyAppState extends State<MyApp> {
       _qid = responseType;
       _scores[_qid]++;
 
-      if (_scores[2] >= 10){
+      if (_scores[2] >= 10) {
         _doggo = Text(
           '\nYOU HAVE BEEN RIGHTLY RESTRICTED \nFROM USING THIS APP. \n\nPLEASE DO NOT CONTACT THE DEVELOPER.',
           textAlign: TextAlign.center,
@@ -75,8 +80,7 @@ class _MyAppState extends State<MyApp> {
         _scores[_qid]--;
         _qid = 2;
         _scores[_qid] = 10;
-      }
-      else {
+      } else {
         _doggo = ImageLoad(true);
         if (!kIsWeb)
           _file.writeContent('${_scores[0]}\n${_scores[1]}\n${_scores[2]}');
@@ -98,8 +102,7 @@ class _MyAppState extends State<MyApp> {
     _lOrient = _orient;
     _orient = MediaQuery.of(context).orientation;
 
-    if (_lOrient != _orient && !(_doggo is Text))
-      _doggo = ImageLoad(false);
+    if (_lOrient != _orient && !(_doggo is Text)) _doggo = ImageLoad(false);
 
     return MaterialApp(
       home: Scaffold(
@@ -108,17 +111,60 @@ class _MyAppState extends State<MyApp> {
             width: _width,
             child: StatAppBar(_scores),
           ),
-          backgroundColor: Colors.black,
+          backgroundColor: Colors.amber,
         ),
         backgroundColor: CupertinoColors.darkBackgroundGray,
-        body: (_orient == Orientation.portrait) ? Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: bodyItems(_questions[_qid + 1], _scores, _answerQuestion, _doggo, _height, _width, 'p'),
-          ) : Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: bodyItems(_questions[_qid + 1], _scores, _answerQuestion, _doggo, _height, _width, 'l'),
+        body: (_orient == Orientation.portrait)
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: bodyItems(
+                    _questions[_qid + 1],
+                    _scores,
+                    _answerQuestion,
+                    _doggo,
+                    _height,
+                    _width,
+                    'p',
+                    bodyBgColor,
+                    questionTextColor,
+                    buttonsBgColor),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: bodyItems(
+                    _questions[_qid + 1],
+                    _scores,
+                    _answerQuestion,
+                    _doggo,
+                    _height,
+                    _width,
+                    'l',
+                    bodyBgColor,
+                    questionTextColor,
+                    buttonsBgColor),
+              ),
+        floatingActionButton: FloatingActionButton(
+          onPressed: () {
+            setState(() {
+              isDarkMode = !isDarkMode;
+              if (isDarkMode) {
+                bodyBgColor = CupertinoColors.darkBackgroundGray;
+                questionTextColor = Colors.white;
+                buttonsBgColor = Colors.black;
+              } else {
+                bodyBgColor = CupertinoColors.white;
+                questionTextColor = Colors.black;
+                buttonsBgColor = Colors.grey;
+              }
+            });
+          },
+          child: Icon(
+            Icons.lightbulb,
+            size: 50.0,
           ),
+          backgroundColor: Colors.blueGrey[900],
         ),
+      ),
     );
   }
 }
