@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import 'package:doggo_rater/questions.dart';
-import 'package:doggo_rater/answers.dart';
+import 'package:doggo_rater/Components/questions.dart';
+import 'package:doggo_rater/Components/answers.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 List<Widget> bodyItems(

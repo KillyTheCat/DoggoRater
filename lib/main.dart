@@ -3,10 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import 'package:doggo_rater/doggoload.dart';
-import 'package:doggo_rater/body.dart';
-import 'statappbar.dart';
-import 'filehandling.dart';
+import 'Components/doggoload.dart';
+import 'Components/body.dart';
+import 'Components/statappbar.dart';
+import 'Backend/filehandling.dart';
 
 // flutter run -d web-server --web-hostname 0.0.0.0 --web-port 8989
 void main() => runApp(AppHome());
