@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
 
 Future<String> fetchImg() async {
@@ -17,7 +18,7 @@ Future<String> fetchImg() async {
   }
 }
 
-class ImageLoad extends StatelessWidget{
+class ImageLoad extends StatelessWidget {
   final bool _genNew;
   static String _currImage;
   final int _score;
@@ -26,50 +27,75 @@ class ImageLoad extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    if (_score >= 10) {// If negative score >= 10, don't give more dogs.
+    if (_score >= 10) {
+      // If negative score >= 10, don't give more dogs.
       return Text(
         '\nYOU HAVE BEEN RIGHTLY RESTRICTED \nFROM USING THIS APP. \n\nPLEASE DO NOT CONTACT THE DEVELOPER.',
         textAlign: TextAlign.center,
         textScaleFactor: 1.7,
         style: TextStyle(color: Colors.red[900], fontWeight: FontWeight.bold),
       );
-    }
-    else return (_genNew) // Valid negative score to return Dog Image
-        ? FutureBuilder<String>(
-            future: fetchImg(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                _currImage = snapshot.data;
-                return Image.network(_currImage, loadingBuilder:
-                    (BuildContext context, Widget child,
-                        ImageChunkEvent loadingProgress) {
-                  if (loadingProgress == null) return child;
+    } else
+      try {
+        return (_genNew) // Valid negative score to return Dog Image
+            ? FutureBuilder<String>(
+                future: fetchImg(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    _currImage = snapshot.data;
+                    // Before Loading finishes if State Rebuilt
+                    return Image.network(_currImage, loadingBuilder:
+                        (BuildContext context, Widget child,
+                            ImageChunkEvent loadingProgress) {
+                      if (loadingProgress == null) return child;
+                      return CircularProgressIndicator(
+                        value: loadingProgress.expectedTotalBytes != null
+                            ? loadingProgress.cumulativeBytesLoaded /
+                                loadingProgress.expectedTotalBytes
+                            : null,
+                      );
+                    });
+                  } else if (snapshot.hasError) {
+                    return Text("${snapshot.error}");
+                  }
+                  // By default, show a loading spinner.
                   return CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes
-                        : null,
+                    backgroundColor: Colors.black,
                   );
-                });
-              } else if (snapshot.hasError) {
-                return Text("${snapshot.error}");
-              }
-              // By default, show a loading spinner.
+                },
+              )
+            : Image.network(_currImage, loadingBuilder: (BuildContext context,
+                Widget child, ImageChunkEvent loadingProgress) {
+                if (loadingProgress == null) return child;
+                return CircularProgressIndicator(
+                  value: loadingProgress.expectedTotalBytes != null
+                      ? loadingProgress.cumulativeBytesLoaded /
+                          loadingProgress.expectedTotalBytes
+                      : null,
+                );
+              });
+      } catch (e) {
+        return Column(children: [
+          Flexible(
+            flex: 5,
+            child: Image.network('https://i.imgur.com/Tgqh5Hn.jpg?1',
+                loadingBuilder: (BuildContext context, Widget child,
+                    ImageChunkEvent loadingProgress) {
+              if (loadingProgress == null) return child;
               return CircularProgressIndicator(
-                backgroundColor: Colors.black,
+                value: loadingProgress.expectedTotalBytes != null
+                    ? loadingProgress.cumulativeBytesLoaded /
+                        loadingProgress.expectedTotalBytes
+                    : null,
               );
-            },
-          )
-        : Image.network(_currImage, loadingBuilder: (BuildContext context,
-            Widget child, ImageChunkEvent loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Center(
-                child: CircularProgressIndicator(
-              value: loadingProgress.expectedTotalBytes != null
-                  ? loadingProgress.cumulativeBytesLoaded /
-                      loadingProgress.expectedTotalBytes
-                  : null,
-            ));
-          });
+            }),
+          ),
+          Flexible(
+              flex: 1,
+              child: Text('ERROR: Could Not Load Image in Time. Get Faster Internet!',
+                  style: GoogleFonts.playfairDisplay(
+                      color: Colors.red, fontSize: 15))),
+        ]);
+      }
   }
 }

@@ -123,10 +123,12 @@ class _MyAppState extends State<MyApp> {
     _lOrient = _orient;
     _orient = MediaQuery.of(context).orientation;
 
-    if (_lOrient != _orient || !_reloadImg)
-      _doggo = ImageLoad(false, _scores[2]);
-    else
-      _doggo = ImageLoad(true, _scores[2]);
+    if (!(_doggo == null)) {
+      if (_lOrient != _orient || !_reloadImg)
+        _doggo = ImageLoad(false, _scores[2]);
+      else
+        _doggo = ImageLoad(true, _scores[2]);
+    }
 
     return MaterialApp(
       home: Scaffold(
@@ -177,6 +179,7 @@ class _MyAppState extends State<MyApp> {
           },
           child: Icon(
             Icons.lightbulb,
+            color: _bodyBgColor,
             size: 50.0,
           ),
           backgroundColor: Colors.blueGrey[900],
