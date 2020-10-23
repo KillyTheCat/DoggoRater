@@ -50,16 +50,20 @@ class _MyAppState extends State<MyApp> {
     _isDarkMode = false;
     _doggo = ImageLoad(true);
 
+    // Colors changing between Dark and Light mode
     _bodyBgColor = CupertinoColors.white;
     _questionTextColor = Colors.black;
     _buttonsBgColor = Colors.white60;
     _lowBodyColor = Colors.amber[300];
+
+    // Enable file handling if not in Web app mode
     if (!kIsWeb) _file.readContent().then((value) => _scoreReader(value));
   }
 
   void _scoreReader(String S) {
     int i = 0;
     for (String score in S.split('\n')) _scores[i++] = int.parse(score);
+    setState(() {});
   }
 
   void _answerQuestion(int responseType) {
@@ -67,6 +71,7 @@ class _MyAppState extends State<MyApp> {
       // Rebuilds MyAppState
       _qid = responseType;
 
+      // Give user another chance to try judging dogs accurately
       if (responseType == 99) {
         _scores = [0, 0, 0];
         _qid = 0;
@@ -74,6 +79,7 @@ class _MyAppState extends State<MyApp> {
       }
       _scores[_qid]++;
 
+      // Change widget based on score
       if (_scores[2] >= 10) {
         _doggo = Text(
           '\nYOU HAVE BEEN RIGHTLY RESTRICTED \nFROM USING THIS APP. \n\nPLEASE DO NOT CONTACT THE DEVELOPER.',
@@ -84,11 +90,12 @@ class _MyAppState extends State<MyApp> {
         _scores[_qid]--;
         _qid = 2;
         _scores[_qid] = 10;
-      } else {
-        _doggo = ImageLoad(true);
-        if (!kIsWeb)
-          _file.writeContent('${_scores[0]}\n${_scores[1]}\n${_scores[2]}');
       }
+      else _doggo = ImageLoad(true);
+
+      // Save score to file
+      if (!kIsWeb)
+        _file.writeContent('${_scores[0]}\n${_scores[1]}\n${_scores[2]}');
     });
   }
 
