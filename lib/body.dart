@@ -6,18 +6,17 @@ import 'package:doggo_rater/answers.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 List<Widget> bodyItems(
-  String question,
-  List<int> _scores,
-  Function(int) _answerQuestion,
-  Widget _doggo,
-  double _height,
-  double _width,
-  String o,
-  Color bodyBackgroundColor,
-  Color questionTextColor,
-  Color buttonBackgroundColor,
-  Color lowerBodyColor
-) {
+    String question,
+    List<int> _scores,
+    Function(int) _answerQuestion,
+    Widget _doggo,
+    double _height,
+    double _width,
+    String o,
+    Color bodyBackgroundColor,
+    Color questionTextColor,
+    Color buttonBackgroundColor,
+    Color lowerBodyColor) {
   return [
     Flexible(
       flex: 2,
@@ -42,7 +41,9 @@ List<Widget> bodyItems(
     if (!(_doggo is Text))
       (o == 'p')
           ? Container(
-              width: double.infinity, color: lowerBodyColor, child: Answers(_answerQuestion, lowerBodyColor))
+              width: double.infinity,
+              color: lowerBodyColor,
+              child: Answers(_answerQuestion, lowerBodyColor))
           : Flexible(
               flex: 2,
               child: Container(
@@ -60,10 +61,11 @@ List<Widget> bodyItems(
           child: RaisedButton(
             padding: EdgeInsets.symmetric(horizontal: 15, vertical: 20),
             child: Text(
-                'I have made a severe and continuous lapse in my Judgement. Please reset.',
-                style: GoogleFonts.bubblegumSans(fontSize: 20, color: questionTextColor),
-                textAlign: TextAlign.center,
-              ),
+              'I have made a severe and continuous lapse in my Judgement. Please reset.',
+              style: GoogleFonts.bubblegumSans(
+                  fontSize: 20, color: questionTextColor),
+              textAlign: TextAlign.center,
+            ),
             onPressed: () => _answerQuestion(99),
             color: buttonBackgroundColor,
           ),

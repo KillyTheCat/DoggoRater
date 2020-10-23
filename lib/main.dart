@@ -43,7 +43,8 @@ class _MyAppState extends State<MyApp> {
   var _lOrient = Orientation.portrait;
   Widget _doggo;
   bool _isDarkMode;
-  Color _bodyBgColor = CupertinoColors.darkBackgroundGray, _lowBodyColor = Colors.black;
+  Color _bodyBgColor = CupertinoColors.darkBackgroundGray,
+      _lowBodyColor = Colors.black;
   Color _questionTextColor = Colors.white;
   Color _buttonsBgColor = Colors.black54;
 
@@ -123,33 +124,33 @@ class _MyAppState extends State<MyApp> {
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: bodyItems(
-                    _questions[_qid + 1],
-                    _scores,
-                    _answerQuestion,
-                    _doggo,
-                    _height,
-                    _width,
-                    'p',
-                    _bodyBgColor,
-                    _questionTextColor,
-                    _buttonsBgColor,
-                    _lowBodyColor,
+                  _questions[_qid + 1],
+                  _scores,
+                  _answerQuestion,
+                  _doggo,
+                  _height,
+                  _width,
+                  'p',
+                  _bodyBgColor,
+                  _questionTextColor,
+                  _buttonsBgColor,
+                  _lowBodyColor,
                 ),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: bodyItems(
-                    _questions[_qid + 1],
-                    _scores,
-                    _answerQuestion,
-                    _doggo,
-                    _height,
-                    _width,
-                    'l',
-                    _bodyBgColor,
-                    _questionTextColor,
-                    _buttonsBgColor,
-                    _lowBodyColor,
+                  _questions[_qid + 1],
+                  _scores,
+                  _answerQuestion,
+                  _doggo,
+                  _height,
+                  _width,
+                  'l',
+                  _bodyBgColor,
+                  _questionTextColor,
+                  _buttonsBgColor,
+                  _lowBodyColor,
                 ),
               ),
         floatingActionButton: FloatingActionButton(
