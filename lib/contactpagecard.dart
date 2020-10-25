@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class ContactCard extends StatelessWidget {
   final String name;
   final String githuburl;
-  ContactCard({this.name, this.githuburl});
+  ContactCard(this.name, this.githuburl);
 
   @override
   Widget build(BuildContext context) {
