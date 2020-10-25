@@ -34,6 +34,8 @@ dependencies:
 
   permission_handler: ^5.0.1+1
 
+  url_launcher: ^5.7.8
+
   google_fonts: ^1.1.1
 
 dev_dependencies:
