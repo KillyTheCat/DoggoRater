@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 class Questions extends StatefulWidget {
-  String _questionText;
-  Color _questionColor;
+  final String _questionText;
+  final Color _questionColor;
   Questions(this._questionText, this._questionColor);
 
   @override

@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
     _scores = [0, 0, 0];
     _isDarkMode = false;
 
-    // Colors changing between Dark and Light mode
+    // Light Mode initially.
     _bodyBgColor = CupertinoColors.white;
     _questionTextColor = Colors.black;
     _buttonsBgColor = Colors.white60;
