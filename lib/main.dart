@@ -7,6 +7,7 @@ import 'Components/doggoload.dart';
 import 'Components/body.dart';
 import 'Components/statappbar.dart';
 import 'Backend/filehandling.dart';
+import 'contactpage.dart';
 
 // flutter run -d web-server --web-hostname 0.0.0.0 --web-port 8989
 void main() => runApp(AppHome());
@@ -15,8 +16,7 @@ class AppHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyApp(),
-    );
+        home: MyApp(), routes: {'/contact': (context) => ContactPage()});
   }
 }
 
@@ -65,7 +65,8 @@ class _MyAppState extends State<MyApp> {
     for (String score in S.split('\n')) {
       if (i > 2)
         _isDarkMode = int.parse(score) == 1;
-      else _scores[i++] = int.parse(score);
+      else
+        _scores[i++] = int.parse(score);
     }
     setState(() => _reloadImg = true);
   }
@@ -99,6 +100,8 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   @override
   Widget build(BuildContext context) {
     var _height = MediaQuery.of(context).size.height;
@@ -111,12 +114,12 @@ class _MyAppState extends State<MyApp> {
     if (!_started) {
       _started = true;
       _orient = MediaQuery.of(context).orientation;
-    }
-    else {
+    } else {
       // Save scores and Dark Mode Status to file separated by \n
       int _darkModeStatus = (_isDarkMode) ? 1 : 0;
       if (!kIsWeb)
-        _file.writeContent('${_scores[0]}\n${_scores[1]}\n${_scores[2]}\n$_darkModeStatus');
+        _file.writeContent(
+            '${_scores[0]}\n${_scores[1]}\n${_scores[2]}\n$_darkModeStatus');
     }
 
     // Track orientation changes in each build
@@ -130,14 +133,65 @@ class _MyAppState extends State<MyApp> {
         _doggo = ImageLoad(true, _scores[2]);
     }
 
+    GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
     return MaterialApp(
       home: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Container(
             width: _width,
             child: StatAppBar(_scores),
           ),
           backgroundColor: _lowBodyColor,
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.all(20),
+            children: <Widget>[
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.black87,
+                ),
+                child: Text(
+                  'A shitty sidebar',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 50.0,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
+              ListTile(
+                onTap: () {
+                  if (_scaffoldKey.currentState.isDrawerOpen) {
+                    _scaffoldKey.currentState.openEndDrawer();
+                    Navigator.pushNamed(context, '/contact');
+                  }
+                },
+                leading: Icon(
+                  Icons.contacts,
+                ),
+                title: Text(
+                  'Contact us',
+                ),
+              ),
+              ListTile(
+                onTap: () {
+                  if (_scaffoldKey.currentState.isDrawerOpen) {
+                    _scaffoldKey.currentState.openEndDrawer();
+                  }
+                  // TODO: Add stuff here to save the image of the dog to the phone, I would suggest using the browser module, you do you.
+                },
+                leading: Icon(
+                  Icons.download_rounded,
+                ),
+                title: Text(
+                  'Save this dog!',
+                ),
+              )
+            ],
+          ),
         ),
         body: (_orient == Orientation.portrait)
             ? Column(
