@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'main.dart';
 
 class Answers extends StatefulWidget {
   Function(int) _answerQuestion;

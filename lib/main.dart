@@ -7,6 +7,7 @@ import 'package:doggo_rater/doggoload.dart';
 import 'package:doggo_rater/body.dart';
 import 'statappbar.dart';
 import 'filehandling.dart';
+import 'contactpage.dart';
 
 // flutter run -d web-server --web-hostname 0.0.0.0 --web-port 8989
 void main() => runApp(AppHome());
@@ -15,8 +16,7 @@ class AppHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: MyApp(),
-    );
+        home: MyApp(), routes: {'/contact': (context) => ContactPage()});
   }
 }
 
@@ -52,11 +52,10 @@ class _MyAppState extends State<MyApp> {
     _scores = [0, 0, 0];
     if (!kIsWeb) _file.readContent().then((value) => _scoreReader(value));
 
-    if (_file.permissionGiven() && !kIsWeb && !_file.exists())
+    if (!kIsWeb && _file.permissionGiven() && !_file.exists())
       _file.writeContent('0\n0\n0');
 
-    if (!kIsWeb)
-      _file.readContent().then((value) => _scoreReader(value));
+    if (!kIsWeb) _file.readContent().then((value) => _scoreReader(value));
   }
 
   void _scoreReader(String S) {
@@ -104,14 +103,65 @@ class _MyAppState extends State<MyApp> {
 
     if (_lOrient != _orient && !(_doggo is Text)) _doggo = ImageLoad(false);
 
+    GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
     return MaterialApp(
       home: Scaffold(
+        key: _scaffoldKey,
         appBar: AppBar(
           title: Container(
             width: _width,
             child: StatAppBar(_scores),
           ),
           backgroundColor: Colors.amber,
+        ),
+        drawer: Drawer(
+          child: ListView(
+            padding: EdgeInsets.all(20),
+            children: <Widget>[
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Colors.black87,
+                ),
+                child: Text(
+                  'A shitty sidebar',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 50.0,
+                    letterSpacing: 1.5,
+                  ),
+                ),
+              ),
+              ListTile(
+                onTap: () {
+                  if (_scaffoldKey.currentState.isDrawerOpen) {
+                    _scaffoldKey.currentState.openEndDrawer();
+                    Navigator.pushNamed(context, '/contact');
+                  }
+                },
+                leading: Icon(
+                  Icons.contacts,
+                ),
+                title: Text(
+                  'Contact us',
+                ),
+              ),
+              ListTile(
+                onTap: () {
+                  if (_scaffoldKey.currentState.isDrawerOpen) {
+                    _scaffoldKey.currentState.openEndDrawer();
+                  }
+                  // TODO: Add stuff here to save the image of the dog to the phone, I would suggest using the browser module, you do you.
+                },
+                leading: Icon(
+                  Icons.download_rounded,
+                ),
+                title: Text(
+                  'Save this dog!',
+                ),
+              )
+            ],
+          ),
         ),
         backgroundColor: CupertinoColors.darkBackgroundGray,
         body: (_orient == Orientation.portrait)

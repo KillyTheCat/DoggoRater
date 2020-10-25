@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 
 import 'package:doggo_rater/questions.dart';
 import 'package:doggo_rater/answers.dart';
-import 'main.dart';
 
 List<Widget> bodyItems(
   String question,
