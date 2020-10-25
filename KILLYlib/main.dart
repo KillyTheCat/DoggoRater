@@ -3,10 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import 'Components/doggoload.dart';
-import 'Components/body.dart';
-import 'Components/statappbar.dart';
-import 'Backend/filehandling.dart';
+import 'package:doggo_rater/doggoload.dart';
+import 'package:doggo_rater/body.dart';
+import 'statappbar.dart';
+import 'filehandling.dart';
 import 'contactpage.dart';
 
 // flutter run -d web-server --web-hostname 0.0.0.0 --web-port 8989
@@ -23,7 +23,8 @@ class AppHome extends StatelessWidget {
 class MyApp extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    FileHandler fileObj = FileHandler('scores.txt', '0\n0\n0\n0');
+    FileHandler fileObj = FileHandler('scores.txt');
+    if (!kIsWeb && !fileObj.exists()) fileObj.writeContent('0\n0\n0');
     return _MyAppState(fileObj);
   }
 }
@@ -40,98 +41,67 @@ class _MyAppState extends State<MyApp> {
   Orientation _orient;
   FileHandler _file;
   var _lOrient = Orientation.portrait;
-  Widget _doggo = Text('');
-  bool _isDarkMode, _reloadImg;
-  Color _bodyBgColor, _lowBodyColor, _questionTextColor, _buttonsBgColor;
+  Widget _doggo = ImageLoad(true);
+  bool isDarkMode = true;
+  Color bodyBgColor = CupertinoColors.darkBackgroundGray;
+  Color questionTextColor = Colors.white;
+  Color buttonsBgColor = Colors.black;
 
   _MyAppState(_f) {
     _file = _f;
     _scores = [0, 0, 0];
-    _isDarkMode = false;
-
-    // Light Mode initially.
-    _bodyBgColor = CupertinoColors.white;
-    _questionTextColor = Colors.black;
-    _buttonsBgColor = Colors.white60;
-    _lowBodyColor = Colors.amber[300];
-
-    // Enable file handling if not in Web app mode
     if (!kIsWeb) _file.readContent().then((value) => _scoreReader(value));
-    _reloadImg = true;
+
+    if (!kIsWeb && _file.permissionGiven() && !_file.exists())
+      _file.writeContent('0\n0\n0');
+
+    if (!kIsWeb) _file.readContent().then((value) => _scoreReader(value));
   }
 
   void _scoreReader(String S) {
     int i = 0;
-    for (String score in S.split('\n')) {
-      if (i > 2)
-        _isDarkMode = int.parse(score) == 1;
-      else
-        _scores[i++] = int.parse(score);
-    }
-    setState(() => _reloadImg = true);
+    for (String score in S.split('\n')) _scores[i++] = int.parse(score);
   }
 
   void _answerQuestion(int responseType) {
     setState(() {
       // Rebuilds MyAppState
       _qid = responseType;
+      _scores[_qid]++;
 
-      // Give user another chance to try judging dogs accurately
-      if (responseType == 99) {
-        _scores = [0, 0, 0];
-        _qid = 0;
-      } else
-        _scores[_qid]++;
+      if (_scores[2] >= 10) {
+        _doggo = Text(
+          '\nYOU HAVE BEEN RIGHTLY RESTRICTED \nFROM USING THIS APP. \n\nPLEASE DO NOT CONTACT THE DEVELOPER.',
+          textAlign: TextAlign.center,
+          textScaleFactor: 2,
+          style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),
+        );
+        _scores[_qid]--;
+        _qid = 2;
+        _scores[_qid] = 10;
+      } else {
+        _doggo = ImageLoad(true);
+        if (!kIsWeb)
+          _file.writeContent('${_scores[0]}\n${_scores[1]}\n${_scores[2]}');
+      }
     });
-    _reloadImg = true;
   }
-
-  void _darkLightSwitch() {
-    if (_isDarkMode) {
-      _bodyBgColor = CupertinoColors.darkBackgroundGray;
-      _questionTextColor = Colors.white;
-      _buttonsBgColor = Colors.black54;
-      _lowBodyColor = Colors.black;
-    } else {
-      _bodyBgColor = CupertinoColors.white;
-      _questionTextColor = Colors.black;
-      _buttonsBgColor = Colors.white60;
-      _lowBodyColor = Colors.amber[300];
-    }
-  }
-
-  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     var _height = MediaQuery.of(context).size.height;
     var _width = MediaQuery.of(context).size.width;
 
-    // Build appearance based on Dark Mode Status
-    _darkLightSwitch();
-
     // Set up initial orientation
     if (!_started) {
       _started = true;
       _orient = MediaQuery.of(context).orientation;
-    } else {
-      // Save scores and Dark Mode Status to file separated by \n
-      int _darkModeStatus = (_isDarkMode) ? 1 : 0;
-      if (!kIsWeb)
-        _file.writeContent(
-            '${_scores[0]}\n${_scores[1]}\n${_scores[2]}\n$_darkModeStatus');
     }
-
     // Track orientation changes in each build
     _lOrient = _orient;
     _orient = MediaQuery.of(context).orientation;
 
-    if (!(_doggo == null)) {
-      if (_lOrient != _orient || !_reloadImg)
-        _doggo = ImageLoad(false, _scores[2]);
-      else
-        _doggo = ImageLoad(true, _scores[2]);
-    }
+    if (_lOrient != _orient && !(_doggo is Text)) _doggo = ImageLoad(false);
 
     GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
@@ -143,7 +113,7 @@ class _MyAppState extends State<MyApp> {
             width: _width,
             child: StatAppBar(_scores),
           ),
-          backgroundColor: _lowBodyColor,
+          backgroundColor: Colors.amber,
         ),
         drawer: Drawer(
           child: ListView(
@@ -193,47 +163,53 @@ class _MyAppState extends State<MyApp> {
             ],
           ),
         ),
+        backgroundColor: CupertinoColors.darkBackgroundGray,
         body: (_orient == Orientation.portrait)
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: bodyItems(
-                  _questions[_qid + 1],
-                  _scores[2],
-                  _answerQuestion,
-                  _doggo,
-                  _height,
-                  'p',
-                  _bodyBgColor,
-                  _questionTextColor,
-                  _buttonsBgColor,
-                  _lowBodyColor,
-                ),
+                    _questions[_qid + 1],
+                    _scores,
+                    _answerQuestion,
+                    _doggo,
+                    _height,
+                    _width,
+                    'p',
+                    bodyBgColor,
+                    questionTextColor,
+                    buttonsBgColor),
               )
             : Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: bodyItems(
-                  _questions[_qid + 1],
-                  _scores[2],
-                  _answerQuestion,
-                  _doggo,
-                  _height,
-                  'l',
-                  _bodyBgColor,
-                  _questionTextColor,
-                  _buttonsBgColor,
-                  _lowBodyColor,
-                ),
+                    _questions[_qid + 1],
+                    _scores,
+                    _answerQuestion,
+                    _doggo,
+                    _height,
+                    _width,
+                    'l',
+                    bodyBgColor,
+                    questionTextColor,
+                    buttonsBgColor),
               ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             setState(() {
-              _isDarkMode = !_isDarkMode;
-              _reloadImg = false;
+              isDarkMode = !isDarkMode;
+              if (isDarkMode) {
+                bodyBgColor = CupertinoColors.darkBackgroundGray;
+                questionTextColor = Colors.white;
+                buttonsBgColor = Colors.black;
+              } else {
+                bodyBgColor = CupertinoColors.white;
+                questionTextColor = Colors.black;
+                buttonsBgColor = Colors.grey;
+              }
             });
           },
           child: Icon(
             Icons.lightbulb,
-            color: _bodyBgColor,
             size: 50.0,
           ),
           backgroundColor: Colors.blueGrey[900],
