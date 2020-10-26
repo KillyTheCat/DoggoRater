@@ -3,12 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import 'Components/sidebar.dart';
-import 'Components/HomePage/doggoload.dart';
+import 'Backend/file_handling.dart';
+import 'Components/ContactPage/contact_page.dart';
 import 'Components/HomePage/body.dart';
-import 'Components/statappbar.dart';
-import 'Backend/filehandling.dart';
-import 'Components/ContactPage/contactpage.dart';
+import 'Components/HomePage/doggo_load.dart';
+import 'Components/sidebar.dart';
+import 'Components/statistic_app_bar.dart';
 
 // flutter run -d web-server --web-hostname 0.0.0.0 --web-port 8989
 void main() => runApp(AppHome());
@@ -32,34 +32,36 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   static const _questions = [
     'Rate Da FLUFFY BOI',
-    'Fluffs doin appreciate. RATE MORE',
-    'Ew. RATE THE FLUFFFSSSS',
+    'Fluffs doing an appreciate. RATE MORE',
+    'Ew. RATE THE FLUFFFSSSS.',
     'Fluffy boi was heartbroken. BE NICE.',
   ];
   FileHandler _file;
   Widget _doggo;
+  String _currDogLink;
 
   List<int> _scores;
   int _qid;
 
-  bool _isDarkMode, _reloadImg, _started;
+  bool _isDarkMode, _started;
   GlobalKey<ScaffoldState> _scaffoldKey;
-  Orientation _orient, _lOrient; // Orientation and last Orientation
+  Orientation _orient; // Orientation
 
   Color _bodyBgColor, _lowBodyColor, _questionTextColor, _buttonsBgColor;
 
   _MyAppState(_f) {
     // Backend Architecture
     _file = _f;
-    _doggo = Text('');
+    _doggo = ImageLoad(getScores, getCurrentDog);
 
     // Main functionality of app
-    _qid = 0; _scores = [0, 0, 0];
+    _qid = 0;
+    _scores = [0, 0, 0];
 
     // Flags required for operation
-    _isDarkMode = false; _reloadImg = true; _started = false;
-    _scaffoldKey= GlobalKey<ScaffoldState>();
-    _lOrient = Orientation.portrait;
+    _isDarkMode = false;
+    _started = false;
+    _scaffoldKey = GlobalKey<ScaffoldState>();
 
     // Light Mode initially.
     _bodyBgColor = CupertinoColors.white;
@@ -79,7 +81,9 @@ class _MyAppState extends State<MyApp> {
       else
         _scores[i++] = int.parse(score);
     }
-    setState(() => _reloadImg = true);
+
+    // Once Score is read from file, reload app.
+    setState(() => _doggo = ImageLoad(getScores, getCurrentDog));
   }
 
   void _answerQuestion(int responseType) {
@@ -95,8 +99,7 @@ class _MyAppState extends State<MyApp> {
         _scores[_qid]++;
     });
 
-    // Once Score is read from file, reload app.
-    _reloadImg = true;
+    _doggo = ImageLoad(getScores, getCurrentDog);
   }
 
   void _darkLightSwitch() {
@@ -113,6 +116,13 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
+  List<int> getScores() => _scores;
+  String sendDogLink() => _currDogLink;
+
+  void getCurrentDog(String thisDog, Widget dog) {
+    _currDogLink = thisDog;
+    _doggo = dog;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -133,17 +143,10 @@ class _MyAppState extends State<MyApp> {
       if (!kIsWeb)
         _file.writeContent(
             '${_scores[0]}\n${_scores[1]}\n${_scores[2]}\n$_darkModeStatus');
+
+      // Track orientation changes in each build
+      _orient = MediaQuery.of(context).orientation;
     }
-
-    // Track orientation changes in each build
-    _lOrient = _orient;
-    _orient = MediaQuery.of(context).orientation;
-
-    // Load Image if orientation wasn't changed and image reload was requested
-    if (_lOrient != _orient || !_reloadImg)
-      _doggo = ImageLoad(false, _scores[2]);
-    else
-      _doggo = ImageLoad(true, _scores[2]);
 
     return MaterialApp(
       home: Scaffold(
@@ -155,7 +158,7 @@ class _MyAppState extends State<MyApp> {
           ),
           backgroundColor: _lowBodyColor,
         ),
-        drawer: SideBarDrawer(context, _scaffoldKey),
+        drawer: SideBarDrawer(context, _scaffoldKey, sendDogLink),
         body: (_orient == Orientation.portrait)
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -189,10 +192,7 @@ class _MyAppState extends State<MyApp> {
               ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            setState(() {
-              _isDarkMode = !_isDarkMode;
-              _reloadImg = false;
-            });
+            setState(() => _isDarkMode = !_isDarkMode);
           },
           child: Icon(
             Icons.lightbulb,

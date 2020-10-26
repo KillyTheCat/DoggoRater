@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'contactpagecard.dart';
+import 'contact_page_card.dart';
 
 class ContactPage extends StatefulWidget {
   @override

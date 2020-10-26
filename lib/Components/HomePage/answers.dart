@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 class Answers extends StatefulWidget {
   final Function(int) _answerQuestion;
   final Color bgColor;
+
   Answers(this._answerQuestion, this.bgColor);
 
   @override
