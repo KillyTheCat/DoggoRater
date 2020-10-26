@@ -3,11 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-import 'Components/doggoload.dart';
-import 'Components/body.dart';
+import 'Components/sidebar.dart';
+import 'Components/HomePage/doggoload.dart';
+import 'Components/HomePage/body.dart';
 import 'Components/statappbar.dart';
 import 'Backend/filehandling.dart';
-import 'contactpage.dart';
+import 'Components/ContactPage/contactpage.dart';
 
 // flutter run -d web-server --web-hostname 0.0.0.0 --web-port 8989
 void main() => runApp(AppHome());
@@ -35,19 +36,30 @@ class _MyAppState extends State<MyApp> {
     'Ew. RATE THE FLUFFFSSSS',
     'Fluffy boi was heartbroken. BE NICE.',
   ];
-  var _qid = 0, _started = false;
-  List<int> _scores;
-  Orientation _orient;
   FileHandler _file;
-  var _lOrient = Orientation.portrait;
-  Widget _doggo = Text('');
-  bool _isDarkMode, _reloadImg;
+  Widget _doggo;
+
+  List<int> _scores;
+  int _qid;
+
+  bool _isDarkMode, _reloadImg, _started;
+  GlobalKey<ScaffoldState> _scaffoldKey;
+  Orientation _orient, _lOrient; // Orientation and last Orientation
+
   Color _bodyBgColor, _lowBodyColor, _questionTextColor, _buttonsBgColor;
 
   _MyAppState(_f) {
+    // Backend Architecture
     _file = _f;
-    _scores = [0, 0, 0];
-    _isDarkMode = false;
+    _doggo = Text('');
+
+    // Main functionality of app
+    _qid = 0; _scores = [0, 0, 0];
+
+    // Flags required for operation
+    _isDarkMode = false; _reloadImg = true; _started = false;
+    _scaffoldKey= GlobalKey<ScaffoldState>();
+    _lOrient = Orientation.portrait;
 
     // Light Mode initially.
     _bodyBgColor = CupertinoColors.white;
@@ -57,7 +69,6 @@ class _MyAppState extends State<MyApp> {
 
     // Enable file handling if not in Web app mode
     if (!kIsWeb) _file.readContent().then((value) => _scoreReader(value));
-    _reloadImg = true;
   }
 
   void _scoreReader(String S) {
@@ -83,6 +94,8 @@ class _MyAppState extends State<MyApp> {
       } else
         _scores[_qid]++;
     });
+
+    // Once Score is read from file, reload app.
     _reloadImg = true;
   }
 
@@ -100,10 +113,10 @@ class _MyAppState extends State<MyApp> {
     }
   }
 
-  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
+    // Get current height and width of screen with every build
     var _height = MediaQuery.of(context).size.height;
     var _width = MediaQuery.of(context).size.width;
 
@@ -115,7 +128,7 @@ class _MyAppState extends State<MyApp> {
       _started = true;
       _orient = MediaQuery.of(context).orientation;
     } else {
-      // Save scores and Dark Mode Status to file separated by \n
+      // Save scores and Dark Mode Status to file separated by \n if not first run
       int _darkModeStatus = (_isDarkMode) ? 1 : 0;
       if (!kIsWeb)
         _file.writeContent(
@@ -126,14 +139,11 @@ class _MyAppState extends State<MyApp> {
     _lOrient = _orient;
     _orient = MediaQuery.of(context).orientation;
 
-    if (!(_doggo == null)) {
-      if (_lOrient != _orient || !_reloadImg)
-        _doggo = ImageLoad(false, _scores[2]);
-      else
-        _doggo = ImageLoad(true, _scores[2]);
-    }
-
-    GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+    // Load Image if orientation wasn't changed and image reload was requested
+    if (_lOrient != _orient || !_reloadImg)
+      _doggo = ImageLoad(false, _scores[2]);
+    else
+      _doggo = ImageLoad(true, _scores[2]);
 
     return MaterialApp(
       home: Scaffold(
@@ -145,54 +155,7 @@ class _MyAppState extends State<MyApp> {
           ),
           backgroundColor: _lowBodyColor,
         ),
-        drawer: Drawer(
-          child: ListView(
-            padding: EdgeInsets.all(20),
-            children: <Widget>[
-              DrawerHeader(
-                decoration: BoxDecoration(
-                  color: Colors.black87,
-                ),
-                child: Text(
-                  'A shitty sidebar',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 50.0,
-                    letterSpacing: 1.5,
-                  ),
-                ),
-              ),
-              ListTile(
-                onTap: () {
-                  if (_scaffoldKey.currentState.isDrawerOpen) {
-                    _scaffoldKey.currentState.openEndDrawer();
-                    Navigator.pushNamed(context, '/contact');
-                  }
-                },
-                leading: Icon(
-                  Icons.contacts,
-                ),
-                title: Text(
-                  'Contact us',
-                ),
-              ),
-              ListTile(
-                onTap: () {
-                  if (_scaffoldKey.currentState.isDrawerOpen) {
-                    _scaffoldKey.currentState.openEndDrawer();
-                  }
-                  // TODO: Add stuff here to save the image of the dog to the phone, I would suggest using the browser module, you do you.
-                },
-                leading: Icon(
-                  Icons.download_rounded,
-                ),
-                title: Text(
-                  'Save this dog!',
-                ),
-              )
-            ],
-          ),
-        ),
+        drawer: SideBarDrawer(context, _scaffoldKey),
         body: (_orient == Orientation.portrait)
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

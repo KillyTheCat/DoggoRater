@@ -4,7 +4,7 @@ Get to look at and rate photos of random Dogs from all over the internet.
 
 ## ABOUT:
 
-Flutter app that was created by [Dhiman Seal (@dhi13man)](http://www.github.com/dhi13man), just as an excuse to learn the basics of Flutter, Requests and Futures.<br><br>
+Flutter app that was created by [Dhiman Seal (@dhi13man)](http://www.github.com/dhi13man) and [@KillyTheCat)](http://www.github.com/killythecat), just as an excuse to learn the basics of Flutter, Requests and Futures.<br><br>
 Uses Dog API: https://dog.ceo/dog-api/
 
 ### Screenshots:
@@ -47,7 +47,7 @@ Uses Dog API: https://dog.ceo/dog-api/
 </tr>
 <tr>
 <td>
-<img src="Screenshots/web_app_landscape.png" alt="Web App [Chrome] [Landscape]" height="325", width="500"/>
+<img src="Screenshots/web_app_landscape.png" alt="Web App [Chrome] [Landscape]" height="325" width="500"/>
 </td>
 </tr>
 </table>
