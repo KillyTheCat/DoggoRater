@@ -59,6 +59,20 @@ class SideBarDrawer extends StatelessWidget {
           ),
           ListTile(
             onTap: () {
+              if (_scaffoldKey.currentState.isDrawerOpen)
+                _scaffoldKey.currentState.openEndDrawer();
+              if (!kIsWeb) downloadImage(_getDogLink());
+              _launchURL(_getDogLink());
+            },
+            leading: Icon(
+              Icons.download_rounded,
+            ),
+            title: Text(
+              'Save this dog!',
+            ),
+          ),
+          ListTile(
+            onTap: () {
               if (_scaffoldKey.currentState.isDrawerOpen) {
                 _scaffoldKey.currentState.openEndDrawer();
                 Navigator.pushNamed(_mainContext, '/contact');
@@ -71,21 +85,6 @@ class SideBarDrawer extends StatelessWidget {
               'Contact us',
             ),
           ),
-          ListTile(
-            onTap: () {
-              if (_scaffoldKey.currentState.isDrawerOpen)
-                _scaffoldKey.currentState.openEndDrawer();
-              if (!kIsWeb)
-                downloadImage(_getDogLink());
-              _launchURL(_getDogLink());
-            },
-            leading: Icon(
-              Icons.download_rounded,
-            ),
-            title: Text(
-              'Save this dog!',
-            ),
-          )
         ],
       ),
     );
