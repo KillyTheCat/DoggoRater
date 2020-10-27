@@ -99,6 +99,9 @@ class _MyAppState extends State<MyApp> {
         _scores[_qid]++;
     });
 
+    // If no rating made yet, reset Questions.
+    if (_scores[0] + _scores[1] + _scores[2] == 0) _qid = -1;
+    // Load a new Dog.
     _doggo = ImageLoad(getScores, getCurrentDog);
   }
 
